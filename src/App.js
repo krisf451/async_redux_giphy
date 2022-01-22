@@ -1,23 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+
+import Gifs from "./components/Gifs";
+import Search from "./components/Search";
+
+import { fetchGifs } from "./actions";
+import { useSelector, useDispatch } from "react-redux";
 
 function App() {
+  const [category, setCategory] = useState("dogs");
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state);
+
+  useEffect(() => {
+    dispatch(fetchGifs(category));
+  }, [category, dispatch]);
+
+  if (loading)
+    return (
+      <div className="d-flex justify-content-center align-items-center spin-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    );
+  if (error) return <h1>{error}</h1>;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Search setCategory={setCategory} />
+      <Gifs />
     </div>
   );
 }
